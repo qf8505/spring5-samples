@@ -18,6 +18,8 @@ import java.util.*;
 
 public class GPDispatcherServlet extends HttpServlet {
     private Map<String,Object> mapping = new HashMap<String, Object>();
+    private List<String> classNames = new ArrayList<String>();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {this.doPost(req,resp);}
     @Override
@@ -46,7 +48,7 @@ public class GPDispatcherServlet extends HttpServlet {
             configContext.load(is);
             String scanPackage = configContext.getProperty("scanPackage");
             doScanner(scanPackage);
-            for (String className : mapping.keySet()) {
+            for (String className : classNames) {
                 if(!className.contains(".")){continue;}
                 Class<?> clazz = Class.forName(className);
                 if(clazz.isAnnotationPresent(GPController.class)){
@@ -95,6 +97,7 @@ public class GPDispatcherServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }finally {
             if(is != null){
                 try {is.close();} catch (IOException e) {
@@ -111,7 +114,7 @@ public class GPDispatcherServlet extends HttpServlet {
             if(file.isDirectory()){ doScanner(scanPackage + "." +  file.getName());}else {
                 if(!file.getName().endsWith(".class")){continue;}
                 String clazzName = (scanPackage + "." + file.getName().replace(".class",""));
-                mapping.put(clazzName,null);
+                classNames.add(clazzName);
             }
         }
     }

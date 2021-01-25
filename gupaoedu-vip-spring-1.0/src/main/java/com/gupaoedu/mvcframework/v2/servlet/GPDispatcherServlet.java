@@ -122,7 +122,7 @@ public class GPDispatcherServlet extends HttpServlet {
         //通过反射拿到method所在class，拿到class之后还是拿到class的名称
         //再调用toLowerFirstCase获得beanName
         String beanName = toLowerFirstCase(method.getDeclaringClass().getSimpleName());
-        method.invoke(ioc.get(beanName),new Object[]{req,resp,params.get("name")[0]});
+        method.invoke(ioc.get(beanName),paramValues);
     }
 
     @Override
